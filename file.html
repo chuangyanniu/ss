@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>下载</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+			background-image: url('https://upyun.pingangc.com/oss/sj/banben/break.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px 2px 20px 2px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            writing-mode: vertical-lr;
+            letter-spacing: 10px;
+        }
+		
+		a {
+			writing-mode: vertical-lr;
+			
+		}
+		
+        .download-link {
+
+            display: none;
+            margin-top: 20px;
+        }
+        .download-link a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .download-link a:hover {
+            background-color: #0056b3;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .modal.show {
+            opacity: 1;
+        }
+        .modal-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transform: scale(0.7);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+        .modal-content input, .modal-content button {
+            margin: 0;
+            padding: 5px;
+            height: 25px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal-content input {
+            width: 100px;
+        }
+        .modal-content #verification-code {
+            width: 100px;
+            background-color: #d9d9d9;
+            color: transparent;
+            text-shadow: 0 0 0 #000;
+            cursor: pointer;
+        }
+        .modal-content #verification-code:hover {
+            color: #000;
+        }
+        .modal-content button {
+            width: 80px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="android-download" class="download-link">
+		  <h1>虎啸龙吟</h1>
+            <a href="https://upyun.pingangc.com/oss/sj/basessaa.apk" download>安卓下载</a>
+        </div>
+
+        <div id="ios-download" class="download-link">
+		<h1>虎啸龙吟</h1>
+            <a href="itms-services://?action=download-manifest&url=https://github.com/chuangyanniu/ss/blob/main/file.plist">苹果下载</a>
+        </div>
+
+        <div id="download-modal" class="modal">
+            <div class="modal-content">
+                <input type="text" id="verification-code" readonly>
+                <input type="text" id="user-input" maxlength="4">
+                <button id="submit-btn">提交</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function detectDevice() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            if (/android/i.test(userAgent)) {
+                document.getElementById('android-download').style.display = 'block';
+            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                document.getElementById('ios-download').style.display = 'block';
+            } else {
+                alert('无法检测到您的设备类型，请手动选择下载链接。');
+                document.getElementById('android-download').style.display = 'block';
+                document.getElementById('ios-download').style.display = 'block';
+            }
+        }
+
+        function generateVerificationCode() {
+            return Math.floor(1000 + Math.random() * 9000).toString();
+        }
+
+        function showDownloadModal() {
+            var modal = document.getElementById('download-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 0);
+
+            var verificationCode = generateVerificationCode();
+            var verificationCodeElement = document.getElementById('verification-code');
+            verificationCodeElement.value = verificationCode;
+
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                    setTimeout(() => modal.style.display = 'none', 300);
+                }
+            });
+        }
+
+        function verifyCode() {
+            var userInput = document.getElementById('user-input').value;
+            var verificationCode = document.getElementById('verification-code').value;
+
+            if (userInput === verificationCode) {
+                var downloadLink = document.querySelector('.download-link a');
+                if (downloadLink) {
+                    window.location.href = downloadLink.href;
+                }
+				   var verificationCode = generateVerificationCode();
+            var verificationCodeElement = document.getElementById('verification-code');
+            verificationCodeElement.value = verificationCode;
+            } else {
+                alert('验证码错误，请重新输入。');
+            }
+        }
+
+        function generateRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        window.onload = function() {
+            detectDevice();
+
+            var verificationCode = generateVerificationCode();
+            var verificationCodeElement = document.getElementById('verification-code');
+            verificationCodeElement.value = verificationCode;
+
+            var colors = [];
+            for (var i = 0; i < verificationCode.length; i++) {
+                colors.push(generateRandomColor());
+            }
+            verificationCodeElement.style.textShadow = colors.map((color, index) => `0 0 0 ${color} ${verificationCode[index]}`).join(', ');
+
+            var downloadLinks = document.querySelectorAll('.download-link a');
+            downloadLinks.forEach(function(link) {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    showDownloadModal();
+                });
+            });
+
+            document.getElementById('submit-btn').addEventListener('click', verifyCode);
+            document.getElementById('user-input').addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    verifyCode();
+                }
+            });
+        };
+    </script>
+</body>
+</html>
